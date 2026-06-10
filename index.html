@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alexandru-Gheorghe Mihai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
+<style>
+  /* ============ RESET & BASE ============ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0c14;
+    --bg-soft: #11141f;
+    --bg-card: #181c2a;
+    --text: #f5f6fa;
+    --text-dim: #8b91a7;
+    --accent: #3b82f6;
+    --accent2: #22d3ee;
+    --accent3: #a78bfa;
+    --gold: #fbbf24;
+    --border: rgba(255,255,255,0.08);
+    --gradient: linear-gradient(135deg, #3b82f6 0%, #a78bfa 50%, #22d3ee 100%);
+  }
+  [data-theme="light"] {
+    --bg: #f8f9fc;
+    --bg-soft: #eef1f7;
+    --bg-card: #ffffff;
+    --text: #161a26;
+    --text-dim: #5c6378;
+    --border: rgba(0,0,0,0.08);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    transition: background 0.5s ease, color 0.5s ease;
+    cursor: none;
+  }
+  @media (max-width: 768px) { body { cursor: auto; } }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; }
+
+  /* ============ CUSTOM CURSOR ============ */
+  .cursor {
+    position: fixed; top: 0; left: 0;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    transition: width 0.2s, height 0.2s, opacity 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    position: fixed; top: 0; left: 0;
+    width: 40px; height: 40px;
+    border: 1.5px solid var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: width 0.3s, height 0.3s, border-color 0.3s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor.expand { width: 60px; height: 60px; opacity: 0.3; }
+  .cursor-ring.expand { width: 80px; height: 80px; }
+  @media (max-width: 768px) { .cursor, .cursor-ring { display: none; } }
+
+  /* ============ NAV ============ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(12px);
+    background: rgba(10,12,20,0.65);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.5s;
+  }
+  [data-theme="light"] nav { background: rgba(248,249,252,0.75); }
+  .logo {
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .logo-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59,130,246,0.7); }
+    50% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(59,130,246,0); }
+  }
+  .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    position: relative;
+    transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--accent);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::after { width: 100%; }
+  .theme-toggle {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text);
+    font-size: 1rem;
+    transition: transform 0.3s;
+  }
+  .theme-toggle:hover { transform: rotate(180deg) scale(1.1); }
+  .mobile-toggle { display: none; background: transparent; color: var(--text); font-size: 1.5rem; }
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .mobile-toggle { display: block; }
+  }
+  .mobile-menu {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 99;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1.8rem;
+    transform: translateX(100%);
+    transition: transform 0.4s ease;
+  }
+  .mobile-menu.open { transform: translateX(0); }
+  .mobile-menu a { font-size: 1.6rem; font-weight: 700; }
+
+  /* ============ SECTIONS ============ */
+  section { padding: 7rem 3rem; position: relative; z-index: 2; }
+  @media (max-width: 768px) { section { padding: 4.5rem 1.5rem; } }
+  .section-header { max-width: 1100px; margin: 0 auto 3.5rem; }
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .section-title {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  .section-title .italic {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .section-desc { color: var(--text-dim); max-width: 640px; font-size: 1.02rem; }
+
+  /* ============ HERO ============ */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    padding: 7rem 3rem 4rem;
+    overflow: hidden;
+  }
+  @media (max-width: 768px) { .hero { padding: 6rem 1.5rem 3rem; } }
+  .hero-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.35;
+    animation: float 22s ease-in-out infinite;
+  }
+  .blob-1 { width: 500px; height: 500px; background: var(--accent); top: -120px; left: -100px; }
+  .blob-2 { width: 420px; height: 420px; background: var(--accent3); bottom: -120px; right: -60px; animation-delay: -8s; }
+  .blob-3 { width: 350px; height: 350px; background: var(--accent2); top: 45%; left: 55%; animation-delay: -15s; }
+  @keyframes float {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(50px,-50px) scale(1.08); }
+    66% { transform: translate(-30px,30px) scale(0.95); }
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; width: 100%; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #4ade80;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .hero h1 {
+    font-size: clamp(2.4rem, 7.5vw, 6rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 .italic {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 700;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--text-dim);
+    max-width: 640px;
+    margin-bottom: 2.5rem;
+  }
+  .typed { color: var(--accent2); font-weight: 600; }
+  .typed::after { content: '|'; animation: blink 1s infinite; color: var(--accent); }
+  @keyframes blink { 50% { opacity: 0; } }
+  .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn {
+    padding: 0.95rem 1.9rem;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    transition: all 0.3s;
+  }
+  .btn-primary { background: var(--text); color: var(--bg); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(59,130,246,0.35); }
+  .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--bg-card); border-color: var(--accent); }
+  .hero-quick {
+    display: flex; gap: 2.5rem; flex-wrap: wrap;
+    margin-top: 3.5rem;
+  }
+  .quick-item { display: flex; flex-direction: column; }
+  .quick-num {
+    font-size: 1.7rem; font-weight: 800;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .quick-label { font-size: 0.8rem; color: var(--text-dim); }
+  .scroll-hint {
+    position: absolute; bottom: 1.5rem; left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem; color: var(--text-dim);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  }
+  .scroll-line {
+    width: 1px; height: 36px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* ============ OBJECTIVES ============ */
+  .objectives-grid {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .objective-card {
+    padding: 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+  .objective-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: var(--gradient);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.5s;
+  }
+  .objective-card:hover { transform: translateY(-6px); border-color: rgba(59,130,246,0.35); }
+  .objective-card:hover::before { transform: scaleX(1); }
+  .objective-icon { font-size: 2.2rem; margin-bottom: 1.2rem; display: block; }
+  .objective-card h3 { font-size: 1.15rem; margin-bottom: 0.6rem; }
+  .objective-card p { color: var(--text-dim); font-size: 0.92rem; }
+
+  /* ============ EDUCATION TIMELINE ============ */
+  .edu-section { background: var(--bg-soft); }
+  .timeline {
+    max-width: 800px; margin: 0 auto;
+    position: relative; padding-left: 2rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent3), transparent);
+  }
+  .timeline-item { position: relative; padding-bottom: 2.8rem; padding-left: 2rem; }
+  .timeline-item::before {
+    content: '';
+    position: absolute; left: -2.45rem; top: 0.4rem;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  .timeline-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem; color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .timeline-item h3 { font-size: 1.2rem; margin-bottom: 0.3rem; }
+  .timeline-sub { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 0.7rem; }
+  .timeline-item p { color: var(--text-dim); font-size: 0.95rem; }
+  .badge-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.8rem; }
+  .badge {
+    font-size: 0.75rem; font-weight: 600;
+    padding: 0.35rem 0.85rem;
+    border-radius: 100px;
+    background: rgba(59,130,246,0.12);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .badge.gold { background: rgba(251,191,36,0.12); color: var(--gold); }
+  .badge.teal { background: rgba(34,211,238,0.12); color: var(--accent2); }
+  .quote-card {
+    margin-top: 0.9rem;
+    padding: 1.1rem 1.3rem;
+    border-left: 3px solid var(--accent);
+    background: var(--bg-card);
+    border-radius: 0 14px 14px 0;
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 0.93rem;
+  }
+
+  /* ============ LANGUAGES ============ */
+  .lang-grid {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.2rem;
+  }
+  .lang-card {
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .lang-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .lang-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+  .lang-name { font-weight: 700; font-size: 1.02rem; display: flex; align-items: center; gap: 0.55rem; }
+  .lang-flag { font-size: 1.3rem; }
+  .lang-level {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; color: var(--text-dim);
+  }
+  .lang-bar {
+    height: 6px; background: var(--bg-soft);
+    border-radius: 3px; overflow: hidden;
+  }
+  [data-theme="light"] .lang-bar { background: #e3e6ee; }
+  .lang-fill {
+    height: 100%;
+    background: var(--gradient);
+    border-radius: 3px;
+    width: 0;
+    transition: width 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ============ ACHIEVEMENTS / PROJECTS ============ */
+  .ach-section { background: var(--bg-soft); }
+  .projects-grid {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.8rem;
+  }
+  .project {
+    border-radius: 22px; overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    transition: all 0.4s;
+  }
+  .project:hover { transform: translateY(-8px); border-color: rgba(59,130,246,0.3); }
+  .project-img { aspect-ratio: 16/9; overflow: hidden; background: var(--bg-soft); }
+  .project-thumb { width: 100%; height: 100%; display: block; transition: transform 0.6s; }
+  .project:hover .project-thumb { transform: scale(1.07); }
+  .project-content { padding: 1.5rem; }
+  .project-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+  .tag {
+    font-size: 0.68rem;
+    padding: 0.28rem 0.7rem;
+    background: rgba(59,130,246,0.12);
+    color: var(--accent);
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tag.new { background: rgba(251,191,36,0.15); color: var(--gold); }
+  .project h3 { font-size: 1.18rem; margin-bottom: 0.5rem; }
+  .project p { color: var(--text-dim); font-size: 0.9rem; }
+
+  /* ============ ACTIVITIES ============ */
+  .activity-list { max-width: 900px; margin: 0 auto; display: grid; gap: 1rem; }
+  .activity {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 1.5rem;
+    padding: 1.4rem 1.6rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    transition: transform 0.3s, border-color 0.3s;
+    align-items: start;
+  }
+  .activity:hover { transform: translateX(6px); border-color: var(--accent); }
+  .activity-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; color: var(--accent);
+    padding-top: 0.2rem;
+  }
+  .activity h4 { font-size: 1rem; margin-bottom: 0.3rem; }
+  .activity p { color: var(--text-dim); font-size: 0.9rem; }
+  @media (max-width: 640px) {
+    .activity { grid-template-columns: 1fr; gap: 0.4rem; }
+  }
+
+  /* ============ RESUME SECTION ============ */
+  .resume-section { background: var(--bg-soft); }
+  .resume-toolbar {
+    max-width: 850px; margin: 0 auto 1.5rem;
+    display: flex; justify-content: flex-end; gap: 0.8rem;
+  }
+  .resume-paper {
+    max-width: 850px;
+    margin: 0 auto;
+    background: #ffffff;
+    color: #1d2433;
+    border-radius: 12px;
+    padding: 3.5rem 3.2rem;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.45);
+    font-size: 0.93rem;
+    line-height: 1.65;
+  }
+  [data-theme="light"] .resume-paper { box-shadow: 0 20px 50px rgba(0,0,0,0.12); }
+  .resume-paper h2 {
+    text-align: center;
+    color: #2f5496;
+    font-size: 1.5rem;
+    margin-bottom: 0.2rem;
+  }
+  .resume-paper .r-name {
+    text-align: center;
+    color: #2f5496;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+  }
+  .resume-paper .r-contact {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #444;
+    padding-bottom: 1.2rem;
+    border-bottom: 2px solid #1d2433;
+    margin-bottom: 1.6rem;
+  }
+  .resume-paper .r-contact a { color: #2563eb; text-decoration: underline; }
+  .resume-paper h3 {
+    color: #2f5496;
+    font-size: 1.08rem;
+    margin: 1.6rem 0 0.6rem;
+  }
+  .resume-paper h3.caps { text-transform: uppercase; letter-spacing: 0.02em; }
+  .resume-paper strong { color: #1d2433; }
+  .resume-paper p { margin-bottom: 0.7rem; }
+  .resume-paper ul { margin: 0.3rem 0 0.8rem 1.5rem; }
+  .resume-paper li { margin-bottom: 0.45rem; }
+  .resume-paper .r-link { color: #2563eb; text-decoration: underline; }
+  @media (max-width: 640px) { .resume-paper { padding: 2rem 1.4rem; } }
+
+  /* ============ CONTACT ============ */
+  .contact-wrap { max-width: 800px; margin: 0 auto; text-align: center; }
+  .contact-wrap h2 {
+    font-size: clamp(2.2rem, 6vw, 4.2rem);
+    font-weight: 900; line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 2rem;
+  }
+  .contact-wrap h2 .italic {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .contact-email {
+    display: inline-block;
+    font-size: clamp(1.05rem, 2.6vw, 1.6rem);
+    color: var(--accent);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .contact-email:hover { border-color: var(--accent); }
+  .contact-info { color: var(--text-dim); margin-bottom: 2.5rem; font-size: 0.95rem; }
+
+  /* ============ FOOTER ============ */
+  footer {
+    padding: 2rem 3rem;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.85rem; color: var(--text-dim);
+    flex-wrap: wrap; gap: 1rem;
+  }
+
+  /* ============ REVEAL ============ */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.4,0,0.2,1), transform 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ============ PRINT (resume only) ============ */
+  @media print {
+    body { cursor: auto; background: white; }
+    nav, .hero, #objectives, #education, #languages, #achievements, #activities,
+    #contact, footer, .resume-toolbar, .cursor, .cursor-ring, .mobile-menu { display: none !important; }
+    .resume-section { padding: 0; background: white; }
+    .resume-paper { box-shadow: none; border-radius: 0; padding: 0.5in; max-width: 100%; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor"></div>
+<div class="cursor-ring"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="logo"><span class="logo-dot"></span>alexandru.mihai</div>
+  <ul class="nav-links">
+    <li><a href="#objectives" data-cursor>Objectives</a></li>
+    <li><a href="#education" data-cursor>Education</a></li>
+    <li><a href="#languages" data-cursor>Languages</a></li>
+    <li><a href="#achievements" data-cursor>Projects</a></li>
+    <li><a href="#activities" data-cursor>Activities</a></li>
+    <li><a href="#resume" data-cursor>Resume</a></li>
+    <li><a href="#contact" data-cursor>Contact</a></li>
+  </ul>
+  <div style="display:flex; gap:0.5rem; align-items:center;">
+    <button class="theme-toggle" id="themeToggle" data-cursor title="Toggle theme">🌙</button>
+    <button class="mobile-toggle" id="mobileToggle">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#objectives">Objectives</a>
+  <a href="#education">Education</a>
+  <a href="#languages">Languages</a>
+  <a href="#achievements">Projects</a>
+  <a href="#activities">Activities</a>
+  <a href="#resume">Resume</a>
+  <a href="#contact">Contact</a>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow"><span class="status-dot"></span> CS & Engineering Student · 2 Mai, Romania → CAU, Seoul 🇰🇷</div>
+    <h1>
+      Alexandru-Gheorghe<br>
+      <span class="italic">Mihai</span>
+    </h1>
+    <p class="hero-subtitle">
+      A curious mind studying <strong>Computer Science and Engineering at Chung-Ang University</strong> —
+      passionate about <span class="typed" id="typed">robotics</span>
+      <br>Polyglot speaking 7 languages, robotics finalist, and aspiring tech founder.
+    </p>
+    <div class="hero-cta">
+      <a href="#resume" class="btn btn-primary" data-cursor>📄 View Resume</a>
+      <a href="#contact" class="btn btn-ghost" data-cursor>Get in touch</a>
+    </div>
+    <div class="hero-quick">
+      <div class="quick-item">
+        <span class="quick-num" data-count="3.81" data-decimal="true">0</span>
+        <span class="quick-label">GPA / 4.0 (unweighted)</span>
+      </div>
+      <div class="quick-item">
+        <span class="quick-num">Top <span data-count="5">0</span>%</span>
+        <span class="quick-label">Class Rank</span>
+      </div>
+      <div class="quick-item">
+        <span class="quick-num" data-count="92">0</span>
+        <span class="quick-label">TOEFL Score</span>
+      </div>
+      <div class="quick-item">
+        <span class="quick-num" data-count="7">0</span>
+        <span class="quick-label">Languages</span>
+      </div>
+      <div class="quick-item">
+        <span class="quick-num" data-count="6">0</span>
+        <span class="quick-label">Major Projects</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- Objectives -->
+<section id="objectives">
+  <div class="section-header reveal">
+    <span class="section-number">/ 01 — Objectives</span>
+    <h2 class="section-title">Where I'm <span class="italic">headed.</span></h2>
+    <p class="section-desc">My academic and professional roadmap for the years ahead.</p>
+  </div>
+  <div class="objectives-grid">
+    <div class="objective-card reveal" data-cursor>
+      <span class="objective-icon">🎓</span>
+      <h3>Engineering at CAU</h3>
+      <p>Pursuing a Computer Science and Engineering degree at Chung-Ang University, Korea — studying alongside university research labs and professors.</p>
+    </div>
+    <div class="objective-card reveal" data-cursor>
+      <span class="objective-icon">🚀</span>
+      <h3>Tech Startup Founder</h3>
+      <p>Incubating a startup in tech — IT and programming — building software that solves real engineering problems.</p>
+    </div>
+    <div class="objective-card reveal" data-cursor>
+      <span class="objective-icon">💠</span>
+      <h3>Semiconductor Career</h3>
+      <p>Aiming for a career in the semiconductor industry — already designing custom processor architectures on FPGA development boards.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Education -->
+<section id="education" class="edu-section">
+  <div class="section-header reveal">
+    <span class="section-number">/ 02 — Formal Education</span>
+    <h2 class="section-title">Academic <span class="italic">journey.</span></h2>
+  </div>
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-date">2024 — Present</div>
+      <h3>Chung-Ang University (CAU)</h3>
+      <div class="timeline-sub">Computer Science and Engineering · Seoul, Korea 🇰🇷</div>
+      <p>Studying CS & Engineering with hands-on projects in semiconductor design (FPGA) and AI/ML offered by university professors and research labs. Completed intensive Korean language training at the CAU Language Institute (Sep 2024 – Jun 2025, Mon–Fri).</p>
+      <div class="badge-row">
+        <span class="badge gold">FPGA Processor Design</span>
+        <span class="badge teal">AI & Machine Learning</span>
+        <span class="badge">Korean Language Institute</span>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-date">September 2021 — June 2024</div>
+      <h3>American K-12 School</h3>
+      <div class="timeline-sub">American High School Diploma Program</div>
+      <p>Completed a full American high school diploma program with a focus on STEM subjects.</p>
+      <div class="badge-row">
+        <span class="badge gold">GPA 3.81 / 4.0</span>
+        <span class="badge">Rank: Top 5%</span>
+        <span class="badge teal">TOEFL 92</span>
+      </div>
+      <div class="quote-card">
+        "Alexandru is highly gifted, speaks multiple languages, and has made several impressive inventions."
+        <div style="font-style:normal; font-size:0.8rem; margin-top:0.4rem; color:var(--accent);">— School Counselor</div>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-date">September 2018 — September 2021</div>
+      <h3>Gala Galaction no. 5 Middle School</h3>
+      <div class="timeline-sub">Romania</div>
+      <p>Built a strong foundation across sciences and humanities while beginning robotics and language studies.</p>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-date">Favorite Subjects</div>
+      <h3>What drives my curiosity</h3>
+      <div class="badge-row">
+        <span class="badge">⚛ Physics</span>
+        <span class="badge">🧪 Chemistry</span>
+        <span class="badge">🏛 US History & Government</span>
+        <span class="badge">📈 Economics</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Languages -->
+<section id="languages">
+  <div class="section-header reveal">
+    <span class="section-number">/ 03 — Languages</span>
+    <h2 class="section-title">I speak <span class="italic">seven.</span></h2>
+    <p class="section-desc">From native Romanian to East Asian languages — now studying in Korean at CAU. Communication has no borders.</p>
+  </div>
+  <div class="lang-grid">
+    <div class="lang-card reveal" data-cursor>
+      <div class="lang-head">
+        <span class="lang-name"><span class="lang-flag">🇷🇴</span> Romanian</span>
+        <span class="lang-level">NATIVE</span>
+      </div>
+      <div class="lang-bar"><div class="lang-fill" data-fill="100"></div></div>
+    </div>
+    <div class="lang-card reveal" data-cursor>
+      <div class="lang-head">
+        <span class="lang-name"><span class="lang-flag">🇬🇧</span> English</span>
+        <span class="lang-level">FLUENT</span>
+      </div>
+      <div class="lang-bar"><div class="lang-fill" data-fill="92"></div></div>
+    </div>
+    <div class="lang-card reveal" data-cursor>
+      <div class="lang-head">
+        <span class="lang-name"><span class="lang-flag">🇰🇷</span> Korean</span>
+        <span class="lang-level">INTERMEDIATE · CAU LANG. INSTITUTE</span>
+      </div>
+      <div class="lang-bar"><div class="lang-fill" data-fill="62"></div></div>
+    </div>
+    <div class="lang-card reveal" data-cursor>
+      <div class="lang-head">
+        <span class="lang-name"><span class="lang-flag">🇬🇷</span> Modern Greek</span>
+        <span class="lang-level">INTERMEDIATE</span>
+      </div>
+      <div class="lang-bar"><div class="lang-fill" data-fill="60"></div></div>
+    </div>
+    <div class="lang-card reveal" data-cursor>
+      <div class="lang-head">
+        <span class="lang-name"><span class="lang-flag">🇫🇷</span> French</span>
+        <span class="lang-level">INTERMEDIATE</span>
+      </div>
+      <div class="lang-bar"><div class="lang-fill" data-fill="58"></div></div>
+    </div>
+    <div class="lang-card reveal" data-cursor>
+      <div class="lang-head">
+        <span class="lang-name"><span class="lang-flag">🇯🇵</span> Japanese</span>
+        <span class="lang-level">INTERMEDIATE</span>
+      </div>
+      <div class="lang-bar"><div class="lang-fill" data-fill="55"></div></div>
+    </div>
+    <div class="lang-card reveal" data-cursor>
+      <div class="lang-head">
+        <span class="lang-name"><span class="lang-flag">🇹🇷</span> Turkish</span>
+        <span class="lang-level">ELEMENTARY · A2</span>
+      </div>
+      <div class="lang-bar"><div class="lang-fill" data-fill="32"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Achievements & Projects -->
+<section id="achievements" class="ach-section">
+  <div class="section-header reveal">
+    <span class="section-number">/ 04 — Achievements & Projects</span>
+    <h2 class="section-title">Things I've <span class="italic">built.</span></h2>
+    <p class="section-desc">From robotics competitions to university research lab projects in semiconductors and AI.</p>
+  </div>
+  <div class="projects-grid">
+    <article class="project reveal" data-cursor>
+      <div class="project-img">
+        <svg class="project-thumb" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="pr5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#047857"/></linearGradient></defs>
+          <rect width="400" height="225" fill="url(#pr5)"/>
+          <rect x="140" y="65" width="120" height="95" rx="8" fill="#0f172a"/>
+          <rect x="160" y="85" width="80" height="55" rx="4" fill="#10b981" opacity="0.35"/>
+          <rect x="170" y="95" width="60" height="35" rx="2" fill="#34d399" opacity="0.55"/>
+          <!-- pins -->
+          <rect x="120" y="78" width="20" height="6" rx="3" fill="#94a3b8"/>
+          <rect x="120" y="94" width="20" height="6" rx="3" fill="#94a3b8"/>
+          <rect x="120" y="110" width="20" height="6" rx="3" fill="#94a3b8"/>
+          <rect x="120" y="126" width="20" height="6" rx="3" fill="#94a3b8"/>
+          <rect x="260" y="78" width="20" height="6" rx="3" fill="#94a3b8"/>
+          <rect x="260" y="94" width="20" height="6" rx="3" fill="#94a3b8"/>
+          <rect x="260" y="110" width="20" height="6" rx="3" fill="#94a3b8"/>
+          <rect x="260" y="126" width="20" height="6" rx="3" fill="#94a3b8"/>
+          <!-- circuit traces -->
+          <polyline points="60,40 100,40 110,55 110,78 120,78" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none"/>
+          <polyline points="50,190 100,190 115,160 115,132 120,129" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none"/>
+          <polyline points="340,50 305,50 290,70 285,81 280,81" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none"/>
+          <circle cx="60" cy="40" r="3" fill="white"/>
+          <circle cx="50" cy="190" r="3" fill="white"/>
+          <circle cx="340" cy="50" r="3" fill="white"/>
+          <text x="200" y="40" fill="white" font-family="monospace" font-size="13" font-weight="bold" text-anchor="middle">CUSTOM CPU · FPGA</text>
+          <text x="200" y="200" fill="rgba(255,255,255,0.8)" font-family="monospace" font-size="10" text-anchor="middle">LOW POWER · HIGH PERFORMANCE</text>
+        </svg>
+      </div>
+      <div class="project-content">
+        <div class="project-tags"><span class="tag new">★ University Lab</span><span class="tag">Semiconductors</span><span class="tag">2025–present</span></div>
+        <h3>Custom Processor on FPGA</h3>
+        <p>Designed and implemented a custom processor architecture on FPGA development boards — delivering performance with decreased power consumption. Targeted at embedded systems: kiosks, bank ATMs, mobile phones, and laptops.</p>
+      </div>
+    </article>
+
+    <article class="project reveal" data-cursor>
+      <div class="project-img">
+        <svg class="project-thumb" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="pr6" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#1e1b4b"/></linearGradient></defs>
+          <rect width="400" height="225" fill="url(#pr6)"/>
+          <!-- neural net -->
+          <circle cx="100" cy="70" r="10" fill="rgba(255,255,255,0.85)"/>
+          <circle cx="100" cy="115" r="10" fill="rgba(255,255,255,0.85)"/>
+          <circle cx="100" cy="160" r="10" fill="rgba(255,255,255,0.85)"/>
+          <circle cx="200" cy="55" r="10" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="200" cy="95" r="10" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="200" cy="135" r="10" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="200" cy="175" r="10" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="300" cy="90" r="10" fill="#fbbf24"/>
+          <circle cx="300" cy="140" r="10" fill="#fbbf24"/>
+          <g stroke="rgba(255,255,255,0.3)" stroke-width="1">
+            <line x1="110" y1="70" x2="190" y2="55"/><line x1="110" y1="70" x2="190" y2="95"/><line x1="110" y1="70" x2="190" y2="135"/>
+            <line x1="110" y1="115" x2="190" y2="95"/><line x1="110" y1="115" x2="190" y2="135"/><line x1="110" y1="115" x2="190" y2="175"/>
+            <line x1="110" y1="160" x2="190" y2="135"/><line x1="110" y1="160" x2="190" y2="175"/><line x1="110" y1="160" x2="190" y2="55"/>
+            <line x1="210" y1="55" x2="290" y2="90"/><line x1="210" y1="95" x2="290" y2="90"/><line x1="210" y1="135" x2="290" y2="140"/><line x1="210" y1="175" x2="290" y2="140"/>
+          </g>
+          <text x="200" y="30" fill="white" font-family="monospace" font-size="12" font-weight="bold" text-anchor="middle">🔐 QUANTUM-INSPIRED ENCRYPTION</text>
+          <text x="200" y="208" fill="rgba(255,255,255,0.7)" font-family="monospace" font-size="10" text-anchor="middle">NumPy · NVIDIA CUDA · One-Time Pad</text>
+        </svg>
+      </div>
+      <div class="project-content">
+        <div class="project-tags"><span class="tag new">★ University Lab</span><span class="tag">AI / ML</span><span class="tag">2025–present</span></div>
+        <h3>AI Encryption Language Model</h3>
+        <p>Designed a custom quantum-inspired encryption algorithm using one-time pad hashing keys, plus a language model that encrypts messages — built on NumPy and NVIDIA CUDA computing layers.</p>
+      </div>
+    </article>
+
+    <article class="project reveal" data-cursor>
+      <div class="project-img">
+        <svg class="project-thumb" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="pr1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs>
+          <rect width="400" height="225" fill="url(#pr1)"/>
+          <rect x="150" y="70" width="100" height="80" rx="12" fill="rgba(255,255,255,0.85)"/>
+          <circle cx="180" cy="100" r="9" fill="#3b82f6"/>
+          <circle cx="220" cy="100" r="9" fill="#3b82f6"/>
+          <rect x="180" y="125" width="40" height="6" rx="3" fill="#94a3b8"/>
+          <rect x="120" y="95" width="25" height="10" rx="5" fill="rgba(255,255,255,0.6)"/>
+          <rect x="255" y="95" width="25" height="10" rx="5" fill="rgba(255,255,255,0.6)"/>
+          <rect x="165" y="155" width="15" height="25" rx="4" fill="rgba(255,255,255,0.6)"/>
+          <rect x="220" y="155" width="15" height="25" rx="4" fill="rgba(255,255,255,0.6)"/>
+          <text x="200" y="45" fill="white" font-family="monospace" font-size="15" font-weight="bold" text-anchor="middle">FINALIST 🏆</text>
+        </svg>
+      </div>
+      <div class="project-content">
+        <div class="project-tags"><span class="tag">Robotics</span><span class="tag">2020–2021</span><span class="tag">Diploma 2022</span></div>
+        <h3>NEXTLAB Tech Robotics Competition</h3>
+        <p>Sole responsibility for robot assembly and programming, with instructor Ciociia Maria. Nominated as finalist and awarded a diploma on March 15, 2022.</p>
+      </div>
+    </article>
+
+    <article class="project reveal" data-cursor>
+      <div class="project-img">
+        <svg class="project-thumb" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="pr2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#dc2626"/></linearGradient></defs>
+          <rect width="400" height="225" fill="url(#pr2)"/>
+          <path d="M 80 150 Q 90 120 130 118 L 160 95 Q 200 80 250 95 L 290 118 Q 325 122 330 150 Z" fill="rgba(255,255,255,0.85)"/>
+          <circle cx="130" cy="155" r="22" fill="#1e293b"/>
+          <circle cx="130" cy="155" r="10" fill="#94a3b8"/>
+          <circle cx="280" cy="155" r="22" fill="#1e293b"/>
+          <circle cx="280" cy="155" r="10" fill="#94a3b8"/>
+          <rect x="185" y="100" width="45" height="22" rx="4" fill="rgba(59,130,246,0.5)"/>
+          <text x="200" y="50" fill="white" font-family="monospace" font-size="13" font-weight="bold" text-anchor="middle">ENGINE WEAR SIMULATION</text>
+        </svg>
+      </div>
+      <div class="project-content">
+        <div class="project-tags"><span class="tag">Software Design</span><span class="tag">2023–present</span></div>
+        <h3>Automotive Engineering Software</h3>
+        <p>Designed software for custom car configuration — engine & body parts — used for testing wear on regular vehicles, predicting part malfunctions at different mileages for maintenance planning.</p>
+      </div>
+    </article>
+
+    <article class="project reveal" data-cursor>
+      <div class="project-img">
+        <svg class="project-thumb" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="pr3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0f172a"/><stop offset="100%" stop-color="#4c1d95"/></linearGradient></defs>
+          <rect width="400" height="225" fill="url(#pr3)"/>
+          <circle cx="60" cy="40" r="1.5" fill="white"/><circle cx="120" cy="25" r="1" fill="white"/>
+          <circle cx="200" cy="50" r="1.5" fill="white"/><circle cx="300" cy="30" r="1" fill="white"/>
+          <circle cx="350" cy="60" r="1.5" fill="white"/><circle cx="90" cy="80" r="1" fill="white"/>
+          <circle cx="330" cy="170" r="35" fill="#94a3b8" opacity="0.7"/>
+          <circle cx="320" cy="160" r="8" fill="#64748b"/>
+          <circle cx="340" cy="180" r="5" fill="#64748b"/>
+          <path d="M 100 180 L 115 120 Q 120 95 130 120 L 145 180 Z" fill="rgba(255,255,255,0.9)"/>
+          <path d="M 100 180 L 95 195 L 110 182 Z" fill="#f97316"/>
+          <path d="M 145 180 L 150 195 L 135 182 Z" fill="#f97316"/>
+          <ellipse cx="122" cy="200" rx="18" ry="6" fill="#fbbf24" opacity="0.7"/>
+          <text x="200" y="40" fill="white" font-family="monospace" font-size="13" font-weight="bold" text-anchor="middle">MISSION SIMULATOR</text>
+        </svg>
+      </div>
+      <div class="project-content">
+        <div class="project-tags"><span class="tag">Simulation</span><span class="tag">2023–present</span></div>
+        <h3>Aerospace Mission Simulator</h3>
+        <p>Simulation software for manned & unmanned space missions. Mission outcomes depend on accidents during launch, mission, or reentry — designed for planning future missions with increased safety.</p>
+      </div>
+    </article>
+
+    <article class="project reveal" data-cursor>
+      <div class="project-img">
+        <svg class="project-thumb" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="pr4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#0e7490"/></linearGradient></defs>
+          <rect width="400" height="225" fill="url(#pr4)"/>
+          <circle cx="200" cy="112" r="50" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+          <circle cx="200" cy="112" r="32" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+          <circle cx="200" cy="112" r="14" fill="rgba(255,255,255,0.9)"/>
+          <ellipse cx="200" cy="112" rx="50" ry="14" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" transform="rotate(-20 200 112)"/>
+          <text x="200" y="195" fill="white" font-family="monospace" font-size="13" font-weight="bold" text-anchor="middle">⚛ NUCLEAR RESEARCH</text>
+        </svg>
+      </div>
+      <div class="project-content">
+        <div class="project-tags"><span class="tag">Research</span><span class="tag">2021–2022</span></div>
+        <h3>Nuclear Physics & Chemistry Papers</h3>
+        <p>Research projects completed in academic profile classes — one exploring nuclear physics, another investigating nuclear chemistry.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- Activities -->
+<section id="activities">
+  <div class="section-header reveal">
+    <span class="section-number">/ 05 — Informal Education & Activities</span>
+    <h2 class="section-title">Always <span class="italic">learning.</span></h2>
+  </div>
+  <div class="activity-list">
+    <div class="activity reveal" data-cursor>
+      <div class="activity-date">2024 — 2025</div>
+      <div>
+        <h4>🇰🇷 Korean at Chung-Ang University Language Institute</h4>
+        <p>Intensive Korean language study at the CAU Language Institute in Seoul. Attended classes from Monday to Friday, September 2024 – June 2025.</p>
+      </div>
+    </div>
+    <div class="activity reveal" data-cursor>
+      <div class="activity-date">2016 — 2021</div>
+      <div>
+        <h4>🤖 Robotics Club — Mircea Cel Batran National College</h4>
+        <p>Hosted by a physics professor. Promoted to higher ranks by completing challenging assessments. Participated 2 days/week and assisted club members in finalizing their projects.</p>
+      </div>
+    </div>
+    <div class="activity reveal" data-cursor>
+      <div class="activity-date">2019 — 2024</div>
+      <div>
+        <h4>🇯🇵 Weekly Japanese Lessons</h4>
+        <p>Five years of weekly lessons with a private tutor in Bucharest.</p>
+      </div>
+    </div>
+    <div class="activity reveal" data-cursor>
+      <div class="activity-date">2016 — 2023</div>
+      <div>
+        <h4>🇬🇷 Weekly Modern Greek Lessons</h4>
+        <p>Seven years at the Elena Elpis Constanța community, in Constanța, Romania.</p>
+      </div>
+    </div>
+    <div class="activity reveal" data-cursor>
+      <div class="activity-date">May 2022</div>
+      <div>
+        <h4>🇹🇷 Turkish at Yunus Emre Institute</h4>
+        <p>Weekly Turkish lessons in Constanta, Romania. Studied to A2 level.</p>
+      </div>
+    </div>
+    <div class="activity reveal" data-cursor>
+      <div class="activity-date">Feb — Apr 2022</div>
+      <div>
+        <h4>📺 TV Broadcasting & East Asian Languages</h4>
+        <p>Completed a course in Television Broadcasting at the Dan Voiculescu Foundation, attending weekly Friday classes alongside East Asian language studies.</p>
+      </div>
+    </div>
+    <div class="activity reveal" data-cursor>
+      <div class="activity-date">Oct 2019</div>
+      <div>
+        <h4>🎓 IntegralEdu Educational Fair</h4>
+        <p>Attended in Constanța, Romania. Discussed UK education options with secondary school representatives and directors.</p>
+      </div>
+    </div>
+    <div class="activity reveal" data-cursor>
+      <div class="activity-date">Sep 2018</div>
+      <div>
+        <h4>🇫🇷 French Lessons</h4>
+        <p>Participated in structured French language lessons.</p>
+      </div>
+    </div>
+    <div class="activity reveal" data-cursor>
+      <div class="activity-date">Ongoing</div>
+      <div>
+        <h4>📻 Hobbies & Special Skills</h4>
+        <p>Ham radio operations (including talking to the ISS!), homebrew electronics, Python & C++ programming, plus Lua and Java (experienced with Linux-based operating systems), and running vanilla & modded Minecraft servers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Resume (printable document) -->
+<section id="resume" class="resume-section">
+  <div class="section-header reveal">
+    <span class="section-number">/ 06 — Resume</span>
+    <h2 class="section-title">The full <span class="italic">document.</span></h2>
+    <p class="section-desc">The complete academic resume — viewable here, printable, or saveable as PDF.</p>
+  </div>
+  <div class="resume-toolbar reveal">
+    <button class="btn btn-primary" onclick="window.print()" data-cursor>🖨 Print / Save as PDF</button>
+  </div>
+  <div class="resume-paper reveal">
+    <h2>Academic Resume</h2>
+    <div class="r-name">Alexandru-Gheorghe Mihai</div>
+    <div class="r-contact">
+      Strada Aurel Vlaicu nr. 205 &nbsp; 907161, 2 Mai Romania<br>
+      T: +40 770 916 888, +82 10-8137-7615 &nbsp; E: <a href="mailto:mihaialexandru36968@yahoo.com">mihaialexandru36968@yahoo.com</a>
+    </div>
+
+    <h3 class="caps">Academic and Professional Objectives</h3>
+    <p>I am studying Computer Science and Engineering at CAU. I aim for incubating a startup in tech (IT, programming), and for a career in semiconductors.</p>
+
+    <h3>Formal Education</h3>
+    <p><strong>September 2021 – June 2024</strong><br>American K-12 School</p>
+    <p><strong>September 2018 – September 2021</strong><br><span class="r-link">Gala Galaction no.5 Middle School</span>, Romania</p>
+    <p><strong>Academic Profile:</strong><br>
+    American high school diploma program. Note from school counselor: "Alexandru is highly gifted, speaks multiple languages, and has made several impressive inventions."<br>
+    <strong>GPA:</strong> 3.81 /4.0 (unweighted)<br>
+    <strong>Rank:</strong> Top 5%</p>
+    <p><strong>Favorite Subjects:</strong><br>Physics, Chemistry, US History and Government, Economics</p>
+    <p><strong>Language Skills:</strong><br>
+    Romanian: Native<br>
+    English: Fluent<br>
+    Modern Greek: Intermediate<br>
+    French: Intermediate<br>
+    Japanese: Intermediate<br>
+    Turkish: Elementary<br>
+    Korean: Intermediate</p>
+
+    <h3>Academic Achievements and Projects</h3>
+    <p><strong>TOEFL:</strong> 92</p>
+    <p><strong>2020–2021:</strong> Participated in NEXTLAB Tech robotics competition with instructor Ciociia Maria. Had sole responsibility for robot assembly and programming. Nominated as a finalist and awarded a diploma on March 15, 2022.</p>
+    <p><strong>September 2018:</strong> Participated in French lessons.</p>
+    <p><strong>2021 – 2022:</strong> Projects and papers completed in academic profile classes.</p>
+    <ul>
+      <li><strong>Physics:</strong> Research project about nuclear physics.</li>
+      <li><strong>Chemistry:</strong> Research project about nuclear chemistry.</li>
+    </ul>
+    <p><strong>2023 – present:</strong> Projects completed featuring focuses in different fields. Had sole responsibility for their development and drafting.</p>
+    <ul>
+      <li><strong>Automotive engineering</strong>: Designed software for designing custom cars with configurable engine and body part configurations. Used for testing wear on regular vehicles, including possible engine part malfunctions at different mileages to determine possible maintenance.</li>
+      <li><strong>Aerospace engineering</strong>: Design simulation software to simulate missions in space. Can host manned and unmanned missions. The outcome of the mission depends on whether or not accidents happen during launch, during the mission or during reentry, can be used for planning in depth future space missions with increased safety.</li>
+    </ul>
+    <p><strong>2025 – present:</strong> Projects offered by university professors and research labs featuring focuses in different fields.</p>
+    <ul>
+      <li><strong>Semiconductor engineering</strong>: Designed and implemented on FPGA-based development boards a custom processor architecture that provides performance with decreased power consumption. For use in embedded systems such as kiosks, bank ATMs or consumer grade devices such as mobile phones or laptops.</li>
+      <li><strong>AI &amp; Machine Learning</strong>: Designed and developed a custom quantum-inspired encryption algorithm using one-time pad hashing keys, and a language model that encrypts a message using NumPy and NVIDIA CUDA computing layers.</li>
+    </ul>
+
+    <h3>Informal Education and Related Activities</h3>
+    <p><strong>October 2019:</strong> Attended IntegralEdu Educational Fair in Constanța, Romania. Discussed education options in the UK with secondary school representatives and directors.</p>
+    <p><strong>May 2022:</strong> Weekly Turkish lessons at <span class="r-link">Yunus Emre Institute</span> in Constanta, Romania. Studied to A2 level.</p>
+    <p><strong>September 2019 - September 2024:</strong> Weekly Japanese lessons with a private tutor in Bucharest.</p>
+    <p><strong>September 2016 – June 2023:</strong> Weekly Modern Greek lessons at Elena Elpis Constanța community, in Constanța, Romania.</p>
+    <p><strong>September 2016 – June 2021:</strong> Participated at a robotics club hosted by a physics professor from 2016 to 2021 at the Mircea Cel Batran National College. Was promoted to higher ranks by completing more challenging assessments. Participated 2 days per week, assisted club members in finalizing their projects.</p>
+    <p><strong>February 2022 – April 2022</strong>: Studied East Asian languages and completed a course in Television Broadcasting at the Dan Voiculescu Foundation in Romania. Attended classes once per week every Friday.</p>
+    <p><strong>September 2024 – June 2025</strong>: Studied Korean at the Chung-Ang University Language Institute. Attended classes from Monday to Friday.</p>
+
+    <h3>Additional Information</h3>
+    <p><strong>Personal Characteristics:</strong> My friends and family say that I am an inquisitive, studious, and gifted student with an unrelenting thirst for knowledge. I can work with great dedication on multiple projects and rarely sit idle. I am polite, follow instructions, and complete thorough, meticulous, and high-caliber work. I have broad knowledge on a wide range of subjects and my teachers have noted that I have a brilliant mind when it comes to technology and IT.</p>
+    <p><strong>Hobbies:</strong> Ham radio operations (for example talking to the ISS), homebrew electronics</p>
+    <p><strong>Special Skills and Abilities:</strong> Natural aptitude for computer programming – worked in Python and C++, and object-oriented programming languages (mainly Lua and Java, experienced with Linux-based operating systems). Experience working with Minecraft servers (vanilla and modded).</p>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="contact-wrap reveal">
+    <span class="section-number">/ 07 — Contact</span>
+    <h2>Let's start a <span class="italic">conversation.</span></h2>
+    <a href="mailto:mihaialexandru36968@yahoo.com" class="contact-email" data-cursor>mihaialexandru36968@yahoo.com</a>
+    <p class="contact-info">
+      📍 Strada Aurel Vlaicu nr. 205, 907161, 2 Mai, Romania<br>
+      📞 +40 770 916 888 · +82 10-8137-7615 🇰🇷
+    </p>
+    <div class="hero-cta" style="justify-content:center;">
+      <a href="mailto:mihaialexandru36968@yahoo.com" class="btn btn-primary" data-cursor>✉️ Send an email</a>
+      <a href="#resume" class="btn btn-ghost" data-cursor>📄 Download resume</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 Alexandru-Gheorghe Mihai · 2 Mai, Romania ↔ Seoul, Korea</div>
+  <div style="font-family:'JetBrains Mono', monospace; font-size:0.75rem;">🛰 ham radio · 🤖 robotics · 💠 fpga · 🔐 ai/ml · 💾 python & c++</div>
+</footer>
+
+<script>
+  // ============ CUSTOM CURSOR ============
+  const cursor = document.querySelector('.cursor');
+  const cursorRing = document.querySelector('.cursor-ring');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    cursor.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+  });
+  (function animateRing() {
+    ringX += (mouseX - ringX) * 0.15;
+    ringY += (mouseY - ringY) * 0.15;
+    cursorRing.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+    requestAnimationFrame(animateRing);
+  })();
+  document.querySelectorAll('[data-cursor]').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.classList.add('expand'); cursorRing.classList.add('expand'); });
+    el.addEventListener('mouseleave', () => { cursor.classList.remove('expand'); cursorRing.classList.remove('expand'); });
+  });
+
+  // ============ THEME TOGGLE ============
+  const themeToggle = document.getElementById('themeToggle');
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    if (current === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+      themeToggle.textContent = '🌙';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      themeToggle.textContent = '☀️';
+    }
+  });
+
+  // ============ MOBILE MENU ============
+  const mobileToggle = document.getElementById('mobileToggle');
+  const mobileMenu = document.getElementById('mobileMenu');
+  mobileToggle.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+    mobileToggle.textContent = mobileMenu.classList.contains('open') ? '✕' : '☰';
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => { mobileMenu.classList.remove('open'); mobileToggle.textContent = '☰'; });
+  });
+
+  // ============ TYPING EFFECT ============
+  const typedEl = document.getElementById('typed');
+  const words = ['semiconductors 💠', 'FPGA design ⚡', 'AI & machine learning 🧠', 'quantum encryption 🔐', 'robotics 🤖', 'nuclear physics ⚛', 'ham radio 📻', 'space missions 🚀', 'programming 💾'];
+  let wordIdx = 0, charIdx = 0, deleting = false;
+  function type() {
+    const word = words[wordIdx];
+    if (!deleting) {
+      typedEl.textContent = word.slice(0, ++charIdx);
+      if (charIdx === word.length) { deleting = true; setTimeout(type, 1800); return; }
+    } else {
+      typedEl.textContent = word.slice(0, --charIdx);
+      if (charIdx === 0) { deleting = false; wordIdx = (wordIdx + 1) % words.length; }
+    }
+    setTimeout(type, deleting ? 45 : 95);
+  }
+  type();
+
+  // ============ REVEAL ON SCROLL ============
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        entry.target.querySelectorAll('.lang-fill').forEach(f => {
+          f.style.width = f.dataset.fill + '%';
+        });
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal, .lang-card').forEach(el => revealObserver.observe(el));
+
+  // ============ COUNTERS ============
+  const counterObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('[data-count]').forEach(el => {
+          const target = parseFloat(el.dataset.count);
+          const isDecimal = el.dataset.decimal === 'true';
+          let current = 0;
+          const steps = 50;
+          const increment = target / steps;
+          const tick = () => {
+            current += increment;
+            if (current < target) {
+              el.textContent = isDecimal ? current.toFixed(2) : Math.floor(current);
+              requestAnimationFrame(tick);
+            } else {
+              el.textContent = isDecimal ? target.toFixed(2) : target;
+            }
+          };
+          tick();
+        });
+        counterObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.hero-quick').forEach(el => counterObserver.observe(el));
+
+  // ============ PARALLAX BLOBS ============
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 30;
+    const y = (e.clientY / window.innerHeight - 0.5) * 30;
+    document.querySelectorAll('.blob').forEach((blob, i) => {
+      const factor = (i + 1) * 0.5;
+      blob.style.translate = `${x * factor}px ${y * factor}px`;
+    });
+  });
+</script>
+
+</body>
+</html>
